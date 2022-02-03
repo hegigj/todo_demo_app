@@ -1,7 +1,8 @@
 <?php
 
-include __DIR__.'/Controller.php';
-include __DIR__.'/../models/TodoModel.php';
+namespace Controllers;
+
+use Models\TodoModel;
 
 class TodoController extends Controller
 {
@@ -11,10 +12,15 @@ class TodoController extends Controller
         $this->model = new TodoModel();
     }
 
-    public function index()
+    public function index(array $globals)
     {
         $todoList = $this->model->fetchAll();
 
-        return include 'views/todo.php';
+        return include __DIR__.'/../views/todo.php';
+    }
+
+    function getById(int $id, array $globals)
+    {
+        // TODO: Implement getById() method.
     }
 }

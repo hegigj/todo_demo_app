@@ -1,6 +1,6 @@
 <?php
 
-include __DIR__.'/Database.php';
+namespace Models;
 
 class Model extends Database
 {
@@ -17,7 +17,7 @@ class Model extends Database
         $query = "SELECT * FROM $this->tableName";
         $statement = $this->db->prepare($query);
         $statement->execute();
-        $results =  $statement->fetchAll(PDO::FETCH_OBJ);
+        $results =  $statement->fetchAll();
         $statement->closeCursor();
         return $results;
     }
@@ -27,17 +27,40 @@ class Model extends Database
         $query = "SELECT * FROM $this->tableName WHERE";
 
         foreach ($condition as $key=>$value) {
-            $query .= ":$key=$value";
+            $query .= " $key=:$key AND";
         }
+
+        $query = substr($query, 0, strlen($query) - 4);
 
         $statement = $this->db->prepare($query);
-        foreach ($condition as $key=>$value) {
-            $statement->bindValue(":$key", $value);
-        }
-        $statement->execute();
-
-        $results =  $statement->fetchAll(PDO::FETCH_OBJ);
+        $statement->execute($condition);
+        $results =  $statement->fetchAll();
         $statement->closeCursor();
         return $results;
+    }
+
+    public function insert(array $insertValues): bool {
+        $query = "INSERT INTO $this->tableName (";
+
+        foreach ($insertValues as $key=>$value) {
+            $query .= " $key,";
+        }
+
+        $query = substr($query, 0, strlen($query) - 1);
+        $query .= " ) VALUES (";
+
+        foreach ($insertValues as $key=>$value) {
+            $query .= " :$key,";
+        }
+
+        $query = substr($query, 0, strlen($query) - 1);
+        $query .= " )";
+
+        var_dump($query, $insertValues);
+
+        $statement = $this->db->prepare($query);
+        $result = $statement->execute($insertValues);
+        $statement->closeCursor();
+        return $result;
     }
 }

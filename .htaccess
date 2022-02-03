@@ -1,6 +1,6 @@
 RewriteEngine on
 
-RewriteBase /mvc_todo_app
+RewriteBase /
 
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f

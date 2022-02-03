@@ -2,24 +2,52 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Todo<?= $subtitle ? " | $subtitle" : "" ?>></title>
+    <title>Todo<?= $subtitle ? " | $subtitle" : "" ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 </head>
 <body>
-<nav class="navbar navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <span class="navbar-brand mb-0 h1">Todo App</span>
+        <a class="navbar-brand" href="#">Todo List</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="/todo?status=active">Active</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/todo?status=done">Done</a>
+                </li>
+            </ul>
+            <?php if (isset($_SESSION['username'])) { ?>
+                <form class="d-flex" action="/auth/logout" method="post">
+                    <label><?= $_SESSION['username'] ?></label>
+                    <button class="btn btn-danger" type="submit">Logout</button>
+                </form>
+            <?php } ?>
+        </div>
     </div>
 </nav>
-<header class="app-header">
-    <h1>Todo App</h1>
-    <?php if (isset($_SESSION['username'])) { ?>
-        <div class="user-section">
-            <span><?= $_SESSION['username'] ?></span>
-            <form action="/auth/logout" method="post">
-                <button>Logout</button>
-            </form>
-        </div>
-    <?php } ?>
-</header>
+<script>
+    const search = window.location.search.slice(1);
+    let queryParams = search
+        .split('&')
+        .reduce((acc, curr) => {
+            const [key, value] = curr.split('=');
+            return { ...acc, [key]: value };
+        }, {});
+
+    if (queryParams) {
+        const navLinks = document.getElementsByClassName('nav-link');
+        const { status } = queryParams;
+
+        if (status === 'active') {
+            navLinks[0].classList.add('active');
+        } else {
+            navLinks[1].classList.add('active');
+        }
+    }
+</script>
