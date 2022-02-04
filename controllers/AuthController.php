@@ -38,6 +38,7 @@ class AuthController extends Controller
                     if (password_verify($password, $users[0]['password'])) {
                         $_SESSION[self::USER_SESSION] = $username;
                         header('Location: ../todo');
+                        exit();
                     } else {
                         $errors['password'] = 'Wrong password';
                     }

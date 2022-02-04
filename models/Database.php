@@ -27,6 +27,7 @@ class Database
         try {
             $this->db = new PDO($dns, $this->username, $this->password);
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->db->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
         } catch (PDOException $e) {
             $errorCode = $e->getCode();
             $errorMessage = $e->getMessage();

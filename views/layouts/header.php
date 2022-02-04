@@ -5,6 +5,11 @@
     <title>Todo<?= $subtitle ? " | $subtitle" : "" ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <style>
+        .username {
+            padding: 8px 12px;
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -22,9 +27,9 @@
                     <a class="nav-link" href="/todo?status=done">Done</a>
                 </li>
             </ul>
-            <?php if (isset($_SESSION['username'])) { ?>
-                <form class="d-flex" action="/auth/logout" method="post">
-                    <label><?= $_SESSION['username'] ?></label>
+            <?php if (isset($_SESSION[\Controllers\AuthController::USER_SESSION])) { ?>
+                <form class="d-flex align-items-center justify-content-end" action="/auth/logout" method="post">
+                    <label class="username"><?= $_SESSION[\Controllers\AuthController::USER_SESSION] ?></label>
                     <button class="btn btn-danger" type="submit">Logout</button>
                 </form>
             <?php } ?>
@@ -33,7 +38,7 @@
 </nav>
 <script>
     const search = window.location.search.slice(1);
-    let queryParams = search
+    const queryParams = search
         .split('&')
         .reduce((acc, curr) => {
             const [key, value] = curr.split('=');

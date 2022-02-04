@@ -2,9 +2,12 @@
 
 namespace Models;
 
+use PDO;
+
 class Model extends Database
 {
     protected string $tableName;
+    protected array $fields;
 
     public function __construct(string $tableName)
     {
@@ -12,28 +15,43 @@ class Model extends Database
         $this->tableName = $tableName;
     }
 
-    public function fetchAll(): array
+    public function fetchPaginatedBy(int $limit, int $offset, array $conditions): array
     {
-        $query = "SELECT * FROM $this->tableName";
+        $fieldsConditions = [];
+        $query = "SELECT * FROM $this->tableName WHERE";
+        foreach ($conditions as $key=>$value) {
+            if (in_array($key, $this->fields)) {
+                $fieldsConditions[$key] = $value;
+                $query .= " $key=:$key AND";
+            }
+        }
+        $query = substr($query, 0, strlen($query) - 3);
+        $query .= "LIMIT :limit OFFSET :offset";
+
         $statement = $this->db->prepare($query);
+        foreach ($fieldsConditions as $key=>$value) {
+            $statement->bindValue(":$key", $value);
+        }
+        $statement->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
         $statement->execute();
-        $results =  $statement->fetchAll();
+        $results = $statement->fetchAll();
         $statement->closeCursor();
         return $results;
     }
 
-    public function fetchBy(array $condition): array
+    public function fetchBy(array $conditions): array
     {
         $query = "SELECT * FROM $this->tableName WHERE";
 
-        foreach ($condition as $key=>$value) {
+        foreach ($conditions as $key=>$value) {
             $query .= " $key=:$key AND";
         }
 
         $query = substr($query, 0, strlen($query) - 4);
 
         $statement = $this->db->prepare($query);
-        $statement->execute($condition);
+        $statement->execute($conditions);
         $results =  $statement->fetchAll();
         $statement->closeCursor();
         return $results;
