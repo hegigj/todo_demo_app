@@ -1,5 +1,6 @@
 <?php
     $subtitle = 'My Todos';
+
     include 'views/layouts/header.php';
 ?>
 

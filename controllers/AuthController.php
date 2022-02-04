@@ -8,21 +8,22 @@ class AuthController extends Controller
 {
     public const USER_SESSION = 'TODO_LOGGED_USER';
 
-    public function __construct()
+    public function __construct(array $globals = [])
     {
+        $this->globals = $globals;
         $this->model = new AuthModel();
     }
 
-    public function login(array $args)
+    public function login()
     {
-        $requestMethod = $args['REQUEST_METHOD'];
+        $requestMethod = $this->globals['REQUEST_METHOD'];
 
         switch ($requestMethod) {
             case 'GET':
                 return include __DIR__.'/../views/login.php';
             case 'POST':
-                $username = $args['username'];
-                $password = $args['password'];
+                $username = $this->globals['username'];
+                $password = $this->globals['password'];
 
                 $users = $this->model->fetchBy([
                     'username' => $username
@@ -38,7 +39,6 @@ class AuthController extends Controller
                     if (password_verify($password, $users[0]['password'])) {
                         $_SESSION[self::USER_SESSION] = $username;
                         header('Location: ../todo');
-                        exit();
                     } else {
                         $errors['password'] = 'Wrong password';
                     }
@@ -53,22 +53,22 @@ class AuthController extends Controller
         return false;
     }
 
-    public function register(array $args) {
-        $requestMethod = $args['REQUEST_METHOD'];
+    public function register() {
+        $requestMethod = $this->globals['REQUEST_METHOD'];
 
         switch ($requestMethod) {
             case 'GET':
                 return include __DIR__.'/../views/register.php';
             case 'POST':
-                $username = $args['username'];
-                $password = $args['password'];
-                $confirmPassword = $args['confirmPassword'];
+                $username = $this->globals['username'];
+                $password = $this->globals['password'];
+                $confirmPassword = $this->globals['confirmPassword'];
 
                 $errors = [];
                 $oldValues = [
                     'username' => $username,
-                    '$password' => $password,
-                    '$confirmPassword' => $confirmPassword
+                    'password' => $password,
+                    'confirmPassword' => $confirmPassword
                 ];
 
                 if ($password === $confirmPassword) {
@@ -91,14 +91,20 @@ class AuthController extends Controller
                 $_SESSION['oldValues'] = $oldValues;
                 return include __DIR__.'/../views/register.php';
         }
+        return false;
     }
 
-    function index(array $globals)
+    public function logout() {
+        $_SESSION[AuthController::USER_SESSION] = null;
+        return include __DIR__.'/../views/login.php';
+    }
+
+    function index()
     {
         // TODO: Implement index() method.
     }
 
-    function getById(int $id, array $globals)
+    function getById(int $id)
     {
         // TODO: Implement getById() method.
     }

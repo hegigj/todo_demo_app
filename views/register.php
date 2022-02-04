@@ -15,8 +15,8 @@
                             id="username"
                             type="email"
                             name="username"
+                            class="form-control"
                             placeholder="name@epoka.edu.al"
-                            required
                     >
                 </div>
                 <div class="mb-3">
@@ -26,8 +26,7 @@
                             type="password"
                             name="password"
                             class="form-control<?= isset($_SESSION['errors']) && isset($_SESSION['errors']['password']) ? ' is-invalid' : ''?>"
-                            value="<?= isset($_SESSION['oldValues']) && $_SESSION['oldValues'] ? $_SESSION['oldValues']['password'] : ''; ?>"
-                            required
+                            value="<?= isset($_SESSION['oldValues']) && isset($_SESSION['oldValues']['confirmPassword']) ? $_SESSION['oldValues']['password'] : ''; ?>"
                     >
                     <?php if (isset($_SESSION['errors']) && isset($_SESSION['errors']['password'])) { ?>
                         <div class="invalid-feedback">
@@ -42,8 +41,7 @@
                             type="password"
                             name="confirmPassword"
                             class="form-control<?= isset($_SESSION['errors']) && isset($_SESSION['errors']['confirmPassword']) ? ' is-invalid' : ''?>"
-                            value="<?= isset($_SESSION['oldValues']) && $_SESSION['oldValues'] ? $_SESSION['oldValues']['confirmPassword'] : ''; ?>"
-                            required
+                            value="<?= isset($_SESSION['oldValues']) && isset($_SESSION['oldValues']['confirmPassword']) ? $_SESSION['oldValues']['confirmPassword'] : ''; ?>"
                     >
                     <?php if (isset($_SESSION['errors']) && isset($_SESSION['errors']['confirmPassword'])) { ?>
                         <div class="invalid-feedback">

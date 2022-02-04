@@ -21,7 +21,7 @@
                             name="username"
                             class="form-control<?= isset($_SESSION['errors']) && isset($_SESSION['errors']['username']) ? ' is-invalid' : ''; ?>"
                             placeholder="name@epoka.edu.al"
-                            value="<?= isset($_SESSION['oldValues']) ? $_SESSION['oldValues']['username'] : ''; ?>"
+                            value="<?= isset($_SESSION['oldValues']) && isset($_SESSION['oldValues']['username']) ? $_SESSION['oldValues']['username'] : ''; ?>"
                     >
                     <?php if (isset($_SESSION['errors']) && isset($_SESSION['errors']['username'])) { ?>
                         <div class="invalid-feedback">
@@ -36,7 +36,7 @@
                             type="password"
                             name="password"
                             class="form-control<?= isset($_SESSION['errors']) && isset($_SESSION['errors']['password']) ? ' is-invalid' : ''?>"
-                            value="<?= isset($_SESSION['oldValues']) && $_SESSION['oldValues'] ? $_SESSION['oldValues']['password'] : ''; ?>"
+                            value="<?= isset($_SESSION['oldValues']) && isset($_SESSION['oldValues']['password']) ? $_SESSION['oldValues']['password'] : ''; ?>"
                     >
                     <?php if (isset($_SESSION['errors']) && isset($_SESSION['errors']['password'])) { ?>
                         <div class="invalid-feedback">
