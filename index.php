@@ -6,10 +6,6 @@ require_once 'vendor/autoload.php';
 use Controllers\AuthController;
 use Controllers\TodoController;
 
-if (!isset($_SESSION[AuthController::USER_SESSION])) {
-    header('Location: /auth/login');
-}
-
 $requestMethod = $_SERVER['REQUEST_METHOD']; // access request method (GET,POST)
 $requestUri = parse_url($_SERVER['REQUEST_URI']); // access request uri
 $requestPath = $requestUri['path']; // get request path /project_directory/...
@@ -22,6 +18,9 @@ $controller = null;
 
 switch (strtoupper($controllerName)) {
     case 'TODO':
+        if (!isset($_SESSION[AuthController::USER_SESSION])) {
+            header('Location: /auth/login');
+        }
         $controller = new TodoController(array_merge($_POST, $_GET, $_FILES, $_SERVER, $_SESSION));
         break;
     case 'AUTH':
@@ -43,6 +42,10 @@ if ($controller) {
         } else {
             $method = $chunk;
             call_user_func_array([$controller, $method], []);
+
+            if ($requestMethod === 'POST' && $method === 'logout') {
+                session_destroy();
+            }
         }
     } else {
         $controller->index();

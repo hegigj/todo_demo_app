@@ -25,17 +25,29 @@ class AuthController extends Controller
                 $username = $this->globals['username'];
                 $password = $this->globals['password'];
 
-                $users = $this->model->fetchBy([
-                    'username' => $username
-                ]);
-
                 $errors = [];
                 $oldValues = [
                     'username' => $username,
                     'password' => $password
                 ];
 
-                if (count($users)) {
+                if (!$username || !$password) {
+                    if (!$username) {
+                        $errors['username'] = 'Username is required';
+                    }
+                    if (!$password) {
+                        $errors['password'] = 'Password is required';
+                    }
+                    $_SESSION['errors'] = $errors;
+                    $_SESSION['oldValues'] = $oldValues;
+                    return include __DIR__.'/../views/login.php';
+                }
+
+                $users = $this->model->fetchBy([
+                    'username' => $username
+                ]);
+
+                if (count($users) === 1) {
                     if (password_verify($password, $users[0]['password'])) {
                         $_SESSION[self::USER_SESSION] = $username;
                         header('Location: ../todo');
@@ -50,7 +62,7 @@ class AuthController extends Controller
                 $_SESSION['oldValues'] = $oldValues;
                 return include __DIR__.'/../views/login.php';
         }
-        return false;
+        return include __DIR__.'/../views/login.php';
     }
 
     public function register() {
@@ -71,6 +83,21 @@ class AuthController extends Controller
                     'confirmPassword' => $confirmPassword
                 ];
 
+                if (!$username || !$password || !$confirmPassword) {
+                    if (!$username) {
+                        $errors['username'] = 'Username is required';
+                    }
+                    if (!$password) {
+                        $errors['password'] = 'Password is required';
+                    }
+                    if (!$confirmPassword) {
+                        $errors['confirmPassword'] = 'Confirm password is required';
+                    }
+                    $_SESSION['errors'] = $errors;
+                    $_SESSION['oldValues'] = $oldValues;
+                    return include __DIR__.'/../views/register.php';
+                }
+
                 if ($password === $confirmPassword) {
                     if (
                         $this->model->insert([
@@ -83,7 +110,6 @@ class AuthController extends Controller
                         header('Location: ../todo');
                     }
                 } else {
-                    $errors['password'] = 'Password does not match with confirm password';
                     $errors['confirmPassword'] = 'Confirmed password does not match with password';
                 }
 
@@ -91,17 +117,19 @@ class AuthController extends Controller
                 $_SESSION['oldValues'] = $oldValues;
                 return include __DIR__.'/../views/register.php';
         }
-        return false;
+        return include __DIR__.'/../views/register.php';
     }
 
     public function logout() {
+        $_SESSION['errors'] = [];
+        $_SESSION['oldValues'] = [];
         $_SESSION[AuthController::USER_SESSION] = null;
         return include __DIR__.'/../views/login.php';
     }
 
     function index()
     {
-        // TODO: Implement index() method.
+        header('Location: ../auth/login');
     }
 
     function getById(int $id)
