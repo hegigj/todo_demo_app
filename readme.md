@@ -1,7 +1,7 @@
 # TODO DEMO APP
 
 ### This app is an example for you to follow in your project.
-### In order to un this mvc project you need to install one of this app in your pc
+### In order to use this mvc project you need to install one of this app in your pc
 * XAMPP (recommended for windows os)
 * LAMPP (recommended for linux os)
 * MAMP (recommended for mac os)
