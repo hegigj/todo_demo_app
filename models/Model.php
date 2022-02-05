@@ -3,6 +3,7 @@
 namespace Models;
 
 use PDO;
+use PDOException;
 
 class Model extends Database
 {
@@ -13,6 +14,13 @@ class Model extends Database
     {
         parent::__construct();
         $this->tableName = $tableName;
+
+        $statement = $this->db->prepare("DESCRIBE $this->tableName");
+        try {
+            $statement->execute();
+        } catch (PDOException $e) {}
+        $this->fields = $statement->fetchAll(PDO::FETCH_COLUMN);
+        $statement->closeCursor();
     }
 
     public function fetchPaginatedBy(int $limit, int $offset, array $conditions): array
@@ -34,7 +42,13 @@ class Model extends Database
         }
         $statement->bindValue(':limit', $limit, PDO::PARAM_INT);
         $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
-        $statement->execute();
+
+        try {
+            $statement->execute();
+        } catch (PDOException $e) {
+            throw $e;
+        }
+
         $results = $statement->fetchAll();
         $statement->closeCursor();
         return $results;
@@ -42,43 +56,87 @@ class Model extends Database
 
     public function fetchBy(array $conditions): array
     {
+        $fieldsConditions = [];
         $query = "SELECT * FROM $this->tableName WHERE";
-
         foreach ($conditions as $key=>$value) {
-            $query .= " $key=:$key AND";
+            if (in_array($key, $this->fields)) {
+                $fieldsConditions[$key] = $value;
+                $query .= " $key=:$key AND";
+            }
         }
-
         $query = substr($query, 0, strlen($query) - 4);
 
         $statement = $this->db->prepare($query);
-        $statement->execute($conditions);
+
+        try {
+            $statement->execute($fieldsConditions);
+        } catch (PDOException $e) {
+            throw $e;
+        }
+
         $results =  $statement->fetchAll();
         $statement->closeCursor();
         return $results;
     }
 
-    public function insert(array $insertValues): bool {
+    public function insert(array $insertValues) {
+        $fieldsValues = [];
         $query = "INSERT INTO $this->tableName (";
-
         foreach ($insertValues as $key=>$value) {
-            $query .= " $key,";
+            if (in_array($key, $this->fields)) {
+                $fieldsValues[$key] = $value;
+                $query .= "$key,";
+            }
         }
-
         $query = substr($query, 0, strlen($query) - 1);
         $query .= " ) VALUES (";
-
-        foreach ($insertValues as $key=>$value) {
+        foreach ($fieldsValues as $key=>$value) {
             $query .= " :$key,";
         }
-
         $query = substr($query, 0, strlen($query) - 1);
         $query .= " )";
 
-        var_dump($query, $insertValues);
+        $statement = $this->db->prepare($query);
+        try {
+            $statement->execute($fieldsValues);
+        } catch (PDOException $e) {
+            throw $e;
+        }
+        $statement->closeCursor();
+        return $this->db->lastInsertId();
+    }
+
+    public function update(array $updateValues, array $conditions): bool
+    {
+        $fieldConditions = [];
+        $query = "UPDATE $this->tableName SET";
+        foreach ($updateValues as $key=>$value) {
+            $query .=" `$key`=:$key,";
+        }
+        $query = substr($query, 0, strlen($query) - 1);
+        $query .= " WHERE";
+        foreach ($conditions as $key=>$value) {
+            if (in_array($key, $this->fields)) {
+                $fieldConditions[$key] = $value;
+                $query .=" $key=:$key AND";
+            }
+        }
+        $query = substr($query, 0, strlen($query) - 4);
 
         $statement = $this->db->prepare($query);
-        $result = $statement->execute($insertValues);
+        foreach ($updateValues as $key=>$value) {
+            $statement->bindValue(":$key", $value);
+        }
+        foreach ($fieldConditions as $key=>$value) {
+            $statement->bindValue(":$key", $value);
+        }
+
+        try {
+            $statement->execute();
+        } catch (PDOException $e) {
+            throw $e;
+        }
         $statement->closeCursor();
-        return $result;
+        return true;
     }
 }

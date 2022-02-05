@@ -53,6 +53,4 @@ if ($controller) {
 
     $_GET = [];
     $_POST = [];
-    $_SESSION['errors'] = [];
-    $_SESSION['oldValues'] = [];
 }

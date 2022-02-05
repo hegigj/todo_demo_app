@@ -5,7 +5,7 @@
 ?>
 
 <div class="container-fluid">
-    <div class="card"">
+    <div class="card">
         <div class="card-body">
             <h5 class="card-title">Login</h5>
             <form
@@ -19,13 +19,13 @@
                             id="username"
                             type="email"
                             name="username"
-                            class="form-control<?= isset($_SESSION['errors']) && isset($_SESSION['errors']['username']) ? ' is-invalid' : ''; ?>"
+                            class="form-control<?= isset($errors) && isset($errors['username']) ? ' is-invalid' : ''; ?>"
                             placeholder="name@epoka.edu.al"
-                            value="<?= isset($_SESSION['oldValues']) && isset($_SESSION['oldValues']['username']) ? $_SESSION['oldValues']['username'] : ''; ?>"
+                            value="<?= isset($oldValues) && isset($oldValues['username']) ? $oldValues['username'] : ''; ?>"
                     >
-                    <?php if (isset($_SESSION['errors']) && isset($_SESSION['errors']['username'])) { ?>
+                    <?php if (isset($errors) && isset($errors['username'])) { ?>
                         <div class="invalid-feedback">
-                            <?= $_SESSION['errors']['username']; ?>
+                            <?= $errors['username']; ?>
                         </div>
                     <?php } ?>
                 </div>
@@ -35,12 +35,12 @@
                             id="password"
                             type="password"
                             name="password"
-                            class="form-control<?= isset($_SESSION['errors']) && isset($_SESSION['errors']['password']) ? ' is-invalid' : ''?>"
-                            value="<?= isset($_SESSION['oldValues']) && isset($_SESSION['oldValues']['password']) ? $_SESSION['oldValues']['password'] : ''; ?>"
+                            class="form-control<?= isset($errors) && isset($errors['password']) ? ' is-invalid' : ''?>"
+                            value="<?= isset($oldValues) && isset($oldValues['password']) ? $oldValues['password'] : ''; ?>"
                     >
-                    <?php if (isset($_SESSION['errors']) && isset($_SESSION['errors']['password'])) { ?>
+                    <?php if (isset($errors) && isset($errors['password'])) { ?>
                         <div class="invalid-feedback">
-                            <?= $_SESSION['errors']['password']; ?>
+                            <?= $errors['password']; ?>
                         </div>
                     <?php } ?>
                 </div>

@@ -28,7 +28,7 @@ if (isset($_SESSION[AuthController::USER_SESSION])) { ?>
                         <a class="nav-link" aria-current="page" href="/todo?status=active">Active</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/todo?status=done">Done</a>
+                        <a class="nav-link" href="/todo?status=completed">Completed</a>
                     </li>
                 </ul>
                 <form class="d-flex align-items-center justify-content-end" action="/auth/logout" method="post">

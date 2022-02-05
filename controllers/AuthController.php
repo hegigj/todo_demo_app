@@ -38,8 +38,6 @@ class AuthController extends Controller
                     if (!$password) {
                         $errors['password'] = 'Password is required';
                     }
-                    $_SESSION['errors'] = $errors;
-                    $_SESSION['oldValues'] = $oldValues;
                     return include __DIR__.'/../views/login.php';
                 }
 
@@ -57,9 +55,6 @@ class AuthController extends Controller
                 } else {
                     $errors['username'] = 'Wrong username';
                 }
-
-                $_SESSION['errors'] = $errors;
-                $_SESSION['oldValues'] = $oldValues;
                 return include __DIR__.'/../views/login.php';
         }
         return include __DIR__.'/../views/login.php';
@@ -93,8 +88,6 @@ class AuthController extends Controller
                     if (!$confirmPassword) {
                         $errors['confirmPassword'] = 'Confirm password is required';
                     }
-                    $_SESSION['errors'] = $errors;
-                    $_SESSION['oldValues'] = $oldValues;
                     return include __DIR__.'/../views/register.php';
                 }
 
@@ -112,17 +105,12 @@ class AuthController extends Controller
                 } else {
                     $errors['confirmPassword'] = 'Confirmed password does not match with password';
                 }
-
-                $_SESSION['errors'] = $errors;
-                $_SESSION['oldValues'] = $oldValues;
                 return include __DIR__.'/../views/register.php';
         }
         return include __DIR__.'/../views/register.php';
     }
 
     public function logout() {
-        $_SESSION['errors'] = [];
-        $_SESSION['oldValues'] = [];
         $_SESSION[AuthController::USER_SESSION] = null;
         return include __DIR__.'/../views/login.php';
     }
