@@ -67,9 +67,7 @@ use Controllers\TodoController;
                         id="desc"
                         name="description"
                         class="form-control<?= isset($errors) && isset($errors['description']) ? ' is-invalid' : ''; ?>"
-                    >
-                        <?= htmlspecialchars(isset($oldValues) && isset($oldValues['description']) ? $oldValues['description'] : ''); ?>
-                    </textarea>
+                    ><?= htmlspecialchars(isset($oldValues) && isset($oldValues['description']) ? $oldValues['description'] : ''); ?></textarea>
                     <?php if (isset($errors) && isset($errors['description'])) { ?>
                         <div class="invalid-feedback">
                             <?= $errors['description']; ?>

@@ -106,7 +106,7 @@ class Model extends Database
         return $this->db->lastInsertId();
     }
 
-    public function update(array $updateValues, array $conditions): bool
+    public function update(array $updateValues, array $conditions)
     {
         $fieldConditions = [];
         $query = "UPDATE $this->tableName SET";
@@ -133,6 +133,27 @@ class Model extends Database
 
         try {
             $statement->execute();
+        } catch (PDOException $e) {
+            throw $e;
+        }
+        $statement->closeCursor();
+        return true;
+    }
+
+    public function delete(array $conditions) {
+        $fieldsConditions = [];
+        $query = "DELETE FROM $this->tableName WHERE";
+        foreach ($conditions as $key=>$value) {
+            if (in_array($key, $this->fields)) {
+                $fieldsConditions[$key] = $value;
+                $query .= " $key=:$key AND";
+            }
+        }
+        $query = substr($query, 0, strlen($query) - 4);
+
+        $statement = $this->db->prepare($query);
+        try {
+            $statement->execute($fieldsConditions);
         } catch (PDOException $e) {
             throw $e;
         }

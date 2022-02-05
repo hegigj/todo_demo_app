@@ -31,7 +31,7 @@ class TodoController extends Controller
 
         if (count($users) === 1) {
             $userId = $users[0]['id'];
-            $limit = isset($this->globals['pageSize']) ? intval($this->globals['pageSize']) : 10;
+            $limit = isset($this->globals['pageSize']) ? intval($this->globals['pageSize']) : 8;
             $offset = ((isset($this->globals['pageNo']) ? intval($this->globals['pageNo']) : 1) - 1) * $limit;
 
             $todoList = $this->model->fetchPaginatedBy($limit, $offset, array_merge(['userId' => $userId], $this->globals));
@@ -196,5 +196,79 @@ class TodoController extends Controller
         }
         header("Location: ../../todo/$id");
         return false;
+    }
+
+    public function delete(int $id)
+    {
+        $requestMethod = $this->globals['REQUEST_METHOD'];
+
+        if ($requestMethod === 'DELETE') {
+            $username = $this->globals[AuthController::USER_SESSION];
+            $userModel = new AuthModel();
+            $users = $userModel->fetchBy([
+                'username' => $username
+            ]);
+
+            if (count($users) === 1) {
+                $userId = $users[0]['id'];
+
+                $todos = null;
+                try {
+                    $todos = $this->model->fetchBy([
+                        'id' => $id,
+                        'userId' => $userId
+                    ]);
+                } catch (PDOException $e) {
+                    header('HTTP/1.1 403 Forbidden');
+                    echo json_encode([
+                        'status' => [
+                            'code' => $e->getCode(),
+                            'message' => $e->getMessage()
+                        ],
+                        'data' => []
+                    ]);
+                    return;
+                }
+
+                if (count($todos) === 1) {
+                    $todo = $todos[0];
+
+                    try {
+                        $this->model->delete([
+                            'id' => $id,
+                            'userId' => $userId
+                        ]);
+                    } catch (PDOException $e) {
+                        header('HTTP/1.1 409 Conflict');
+                        echo json_encode([
+                            'status' => [
+                                'code' => $e->getCode(),
+                                'message' => $e->getMessage()
+                            ],
+                            'data' => []
+                        ]);
+                        return;
+                    }
+
+                    header('HTTP/1.1 200 Ok');
+                    echo json_encode([
+                        'status' => [
+                            'code' => 200,
+                            'message' => 'Todo "'.$todo['name'].'" was deleted successfully'
+                        ],
+                        'data' => $todo
+                    ]);
+                } else {
+                    header('HTTP/1.1 404 Not Found');
+                    echo json_encode([
+                        'status' => [
+                            'code' => 404,
+                            'message' => "Todo with id = $id was not found in the database"
+                        ],
+                        'data' => []
+                    ]);
+                }
+            }
+        }
     }
 }
