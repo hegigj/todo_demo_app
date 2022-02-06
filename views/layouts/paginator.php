@@ -49,7 +49,7 @@
                     pageNo = pageNo ? +pageNo > 1 ? +pageNo : 2 : 2;
                     pageItems.item(i).href = url + parseToSearch({ ...paginatorQuery, pageNo: pageNo - 1});
                 } else {
-                    pageNo = pageNo ? +pageNo : 5;
+                    pageNo = pageNo ? +pageNo : 1;
                     pageItems.item(i).href = url + parseToSearch({ ...paginatorQuery, pageNo: pageNo + 1});
                 }
             } else {

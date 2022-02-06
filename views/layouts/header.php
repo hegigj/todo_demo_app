@@ -30,6 +30,9 @@ if (isset($_SESSION[AuthController::USER_SESSION])) { ?>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/todo">All</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/todo?status=active">Active</a>
                     </li>
                     <li class="nav-item">
@@ -45,7 +48,10 @@ if (isset($_SESSION[AuthController::USER_SESSION])) { ?>
     </nav>
 <?php } ?>
 <script>
-    const search = window.location.search.slice(1);
+    let search = window.location.search;
+    if (search) {
+        search = search.slice(1);
+    }
     const queryParams = search
         .split('&')
         .reduce((acc, curr) => {
@@ -53,14 +59,17 @@ if (isset($_SESSION[AuthController::USER_SESSION])) { ?>
             return { ...acc, [key]: value };
         }, {});
 
-    if (queryParams) {
-        const navLinks = document.getElementsByClassName('nav-link');
+    const navLinks = document.getElementsByClassName('nav-link');
+
+    if (queryParams && queryParams.status) {
         const { status } = queryParams;
 
         if (status === 'active') {
-            navLinks[0].classList.add('active');
-        } else {
             navLinks[1].classList.add('active');
+        } else {
+            navLinks[2].classList.add('active');
         }
+    } else {
+        navLinks[0].classList.add('active');
     }
 </script>
